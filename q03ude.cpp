@@ -62,11 +62,11 @@ void Q03UDE::gen_code(char *buf, enum code_flags flags, char *reg, int reg_num, 
         strcat(buf, reg);
 
         char reg_num_buf[7];
-        sprintf(reg_num_buf, "%06d", reg_num);
+        sprintf(reg_num_buf, "%06d", reg_num);//"%06"是用0填充6个字符的前面的字符 000028
         strcat(buf, reg_num_buf);
 
         char reg_cnt_buf[5];
-        sprintf(reg_cnt_buf, "%04d", reg_cnt);
+        sprintf(reg_cnt_buf, "%04d", reg_cnt);//0001
         strcat(buf, reg_cnt_buf);
     }
     else if (flags == WRITE)
@@ -117,7 +117,7 @@ QString Q03UDE::get_code(void)
     static int i = 0;
     int i_max = read_regs.size();
     char buf[100];
-
+    qDebug() << "Q03UDE::get_code" << QThread::currentThread();
     if (is_write == true)
     {
         //生成写M的指令
@@ -132,11 +132,11 @@ QString Q03UDE::get_code(void)
             i = 0;
         j = i;
 
-        gen_code(buf, READ, read_regs.at(i).reg_name.toLatin1().data(), read_regs.at(i).reg_num, 1, 0);
+        gen_code(buf, READ, read_regs.at(i).reg_name.toLatin1().data(), read_regs.at(i).reg_num, 1, 0);//如读取Y27,Y28的值
         i++;
         code_type = READ;
     }
-
+    //qDebug() << "QString(buf)" <<QString(buf) << "      " << QString(buf).length();
     return QString(buf);
 }
 
@@ -149,8 +149,6 @@ void Q03UDE::run(void)
     QString code = get_code();
     //qDebug() << code;
     tcpClient->write(code.toLatin1());
-
-
 
     /*
     char buf[100];
